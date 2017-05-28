@@ -1,0 +1,26 @@
+{
+  "name": "create-elem",
+  "version": "1.0.0",
+  "description": "Tiny function to generate HTML elements/structures, along with their attributes and CSS",
+  "main": "createElem.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DanRuta/createElem.git"
+  },
+  "author": "Dan Ruta",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/DanRuta/createElem/issues"
+  },
+  "homepage": "https://github.com/DanRuta/createElem#readme",
+  "devDependencies": {
+    "babel-preset-es2015": "^6.9.0",
+    "babel-preset-stage-3": "^6.5.0",
+    "babelify": "^7.3.0",
+    "grunt": "^1.0.1",
+    "grunt-cli": "^1.2.0",
+    "grunt-contrib-watch": "^1.0.0",
+    "grunt-babel": "*",
+    "grunt-contrib-uglify": "*"
+  }
+}

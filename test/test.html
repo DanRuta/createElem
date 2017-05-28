@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Mocha Browser unit testing</title>
+    <link rel="stylesheet" type="text/css" href="mocha.css">
+    <script src="mocha.js"></script>
+    <script src="chai.js"></script>
+    <script src="sinon-chai.js"></script>
+    <script src="sinon.js"></script>
+    <script src="../dist/createElem.js"></script>
+</head>
+<body>
+    <div id="mocha"></div>
+    <script>mocha.setup("bdd")</script>
+    <script>
+        "use strict"
+        const expect = chai.expect
+
+        describe("Function signature", () => {
+
+            let sandbox
+
+            before(() => {
+                sandbox = sinon.sandbox.create()
+                sandbox.stub(window.console, "warn")
+            })
+
+            after(() => sandbox.restore())
+
+            it("Exists in the window object", () => {
+                expect("createElem" in window).to.be.true
+            })
+
+            it("Creates a <div> when function is called without any parameters", () => {
+                expect(createElem() instanceof HTMLDivElement).to.be.true
+            })
+
+            it("Does not fill the element with anything, by default", () => {
+                expect(createElem().innerHTML).to.equal("")
+            })
+
+            it("Logs a warning when giving a boolean as parameter: createElem('div', true)", () => {
+                createElem('div', true)
+                expect(console.warn).to.be.called
+            })
+
+            it("Returns a list of 5 divs when passing 5 as first parameter: createElem(5, 'div')", () => {
+                const elems = createElem(5, 'div')
+                expect(elems.length).to.equal(5)
+                expect(elems.map(e => e.tagName).every(t => t=="DIV")).to.be.true
+            })
+
+            it("Throws an error when passing a negative integer as parameter", () => {
+                expect(createElem.bind(createElem, -2, "div")).to.throw(`Element count must be larger than 0. Actual value: -2`)
+            })
+
+            it("Throws an error when passing a float as first parameter", () => {
+                expect(createElem.bind(createElem, 1.1)).to.throw("Floats are not supported for element count.")
+            })
+
+            it("Appends 2 divs to the new element when they are passed as parameters", () => {
+                const div1 = document.createElement("div")
+                const div2 = document.createElement("div")
+                const newElem = createElem("div", div1, div2)
+
+                expect(newElem.contains(div1)).to.be.true
+                expect(newElem.contains(div2)).to.be.true
+            })
+
+            it("Appends 2 divs to the new element when they are passed as parameters (when passed together in an array)", () => {
+                const div1 = document.createElement("div")
+                const div2 = document.createElement("div")
+                const newElem = createElem("div", [div1, div2])
+
+                expect(newElem.contains(div1)).to.be.true
+                expect(newElem.contains(div2)).to.be.true
+            })
+
+            it("Throws an error if passing multiple attributes objects as parameters", () => {
+                expect(createElem.bind(createElem, "div", {id: "id"}, {class: "class"})).to.throw("Multiple attributes objects not supported")
+            })
+        })
+
+        describe("Selector", () => {
+
+            it("Throws an error when passing anything other than a string for the tag name", () => {
+                expect(createElem.bind(createElem, 4, 2)).to.throw("Tag name must be a string")
+            })
+
+            it("Creates a <span> element for createElem('span')", () => {
+                expect(createElem("span") instanceof HTMLSpanElement).to.be.true
+            })
+
+            it("Creates a <jhjdfhgk> element for createElem('jhjdfhgk')", () => {
+                expect(createElem("jhjdfhgk").tagName).to.equal("JHJDFHGK")
+            })
+
+            it("Creates a div with id 'theId' for createElem('div#theId')", () => {
+                expect(createElem('div#theId').id).to.equal("theId")
+            })
+
+            it("Creates a div with class 'theClass' for createElem('div.theClass')", () => {
+                expect(createElem('div.theClass').className).to.equal("theClass")
+            })
+
+            it("Creates a div with both id 'theId' and class 'theClass' for createElem('div#theId.theClass')", () => {
+                const elem = createElem('div#theId.theClass') 
+                expect(elem.id).to.equal("theId")
+                expect(elem.className).to.equal("theClass")
+            })
+
+            it("Creates a div with both id 'theId' and class 'theClass' for createElem('div.theClass#theId')  (id and class reversed)", () => {
+                const elem = createElem('div.theClass#theId') 
+                expect(elem.id).to.equal("theId")
+                expect(elem.className).to.equal("theClass")
+            })
+
+            it("Creates a span with classes 'class1' and 'class2' for createElem('span.class1.class2')", () => {
+                expect(createElem('span.class1.class2').className).to.equal("class1 class2")
+            })
+
+            it("Creates a section with id 'theId1' for createElem('section#theId1#theId2')", () => {
+                expect(createElem('section#theId1#theId2').id).to.equal("theId1")
+            })
+
+            it("Creates a p element with id 'theId' and classes 'class1', 'class2' and 'class3' for createElem('p.class1.class2#theId.class3')", () => {
+                const elem = createElem('p.class1.class2#theId.class3')
+                expect(elem.id).to.equal("theId")
+                expect(elem.className).to.equal("class1 class2 class3")
+            })
+        })
+
+        describe("Attributes", () => {
+
+            it("Creates a div with id 'theId' for createElem('div', {id: 'theId'})", () => {
+                expect(createElem('div', {id: 'theId'}).id).to.equal("theId")
+            })
+
+            it("Creates a div with id 'theId2' for createElem('div#theId', {id: 'theId2'})", () => {
+                expect(createElem('div#theId', {id: 'theId2'}).id).to.equal("theId2")
+            })
+
+            it("Creates a div with class 'theClass' for createElem('div', {class: 'theClass'})", () => {
+                expect(createElem('div', {class: 'theClass'}).className).to.equal("theClass")
+            })
+
+            it("Creates a div with class 'theClass' for createElem('div', {className: 'theClass'})", () => {
+                expect(createElem('div', {className: 'theClass'}).className).to.equal("theClass")
+            })
+
+            it("Creates a div with class 'theClass2' for createElem('div.theClass', {class: 'theClass2'})", () => {
+                expect(createElem('div.theClass', {class: 'theClass2'}).className).to.equal("theClass2")
+            })
+
+            it("Creates a required input of type number for createElem('input', {type: 'number', required: true})", () => {
+                const elem = createElem('input', {type: 'number', required: true})
+                expect(elem.required).to.be.true
+                expect(elem.type).to.equal("number")
+            })
+        })
+
+        describe("Styling", () => {
+
+            it("Creates a div with height: 200px for createElem('div', {style: {height: '200px'}})", () => {
+                const elem = createElem('div', {style: {height: '200px'}})
+                expect(elem.tagName).to.equal("DIV")
+                expect(elem.style.height).to.equal("200px")
+            })
+
+            it("Creates a div with height: 200px for createElem('div', {style: {height: 200}}) (The value is an integer, not string)", () => {
+                const elem = createElem('div', {style: {height: 200}})
+                expect(elem.tagName).to.equal("DIV")
+                expect(elem.style.height).to.equal("200px")
+            })
+
+            it("Creates div with backgroud colour red for createElem('div', {style: {backgroundColor: 'red'}})", () => {
+                const elem = createElem('div', {style: {backgroundColor: 'red'}})
+                expect(elem.tagName).to.equal("DIV")
+                expect(elem.style.backgroundColor).to.equal("red")
+            })
+
+            it("Creates div with backgroud colour red for createElem('div', {style: {'background-color': 'red'}}) (CSS-like hyphen separated)", () => {
+                const elem = createElem('div', {style: {'background-color': 'red'}})
+                expect(elem.tagName).to.equal("DIV")
+                expect(elem.style.backgroundColor).to.equal("red")
+            })
+
+            it("Accepts a string as the style attribute", () => {
+                expect(createElem.bind(createElem, "div", {style: "height:200px"})).to.not.throw
+            })
+
+            it("Throws an error if any other data type other than object or string is given as style attribute's value", () => {
+                expect(createElem.bind(createElem, "div", {style: 1})).to.throw("Style value must be either object or string.")
+                expect(createElem.bind(createElem, "div", {style: ["fg"]})).to.throw("Style value must be either object or string.")
+                expect(createElem.bind(createElem, "div", {style: null})).to.throw("Style value must be either object or string.")
+                expect(createElem.bind(createElem, "div", {style: undefined})).to.throw("Style value must be either object or string.")
+            })
+
+            it("Creates a div with height 200px and width 150px for createElem('div', {style: 'height:200px;width:150px'})", () => {
+                const elem = createElem('div', {style: 'height:200px;width:150px'})
+                expect(elem.style.height).to.equal("200px")
+                expect(elem.style.width).to.equal("150px")
+            })
+        })
+
+        // TO-maybe-DO
+
+        // Javascript events object, key:value -> event:function, event:[f, f]
+        // rest of ...args to be only elements or arrays of elements, for appending
+        // Accept functions when element count >1, for attributes/styles, accepting params -> elem, elemIndex
+        // Accept arrays when element count>1, which are iterated through with [ index % arr.length]
+    </script>
+    <script>mocha.run()</script>
+</body>
+</html>
