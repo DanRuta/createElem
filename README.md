@@ -3,6 +3,7 @@ createElem is a tiny but powerful helper function, which can be used to quickly 
 
 ##  createElem(numOfElements, tag, options, children)
 All parameters are optional, but they must appear in that order, and tag must be included if using options or children.
+
 | Parameter | What it does| Type | Default|
 | ------------- |:-------------:| :-----:| :-----:| 
 | numOfElements | How many of this element to return. If one, it returns the element, otherwise it will return an array. | Must be a positive integer | 1 |
