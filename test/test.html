@@ -203,10 +203,41 @@
             })
         })
 
+
+        describe("Events", () => {
+
+            let sandbox
+
+            before(() => {
+                sandbox = sinon.sandbox.create()
+                sandbox.stub(window.console, "log")
+            })
+
+            after(() => sandbox.restore())
+
+            it("Creates a div with a click event listener, to console.log", () => {
+                const elem = createElem("div", {events: {
+                    click: () => console.log("hi")
+                }})
+
+                elem.click()
+
+                expect(console.log).to.have.been.calledWith("hi")
+            })
+
+            it("Creates a div with two event listeners for click, when the functions are given in an array" , () => {
+                    const elem = createElem("div", {events: {
+                        click: [() => console.log("1"), () => console.log(2)]
+                    }})
+
+                    elem.click()
+                    expect(console.log).to.have.been.calledWith("1")
+                    expect(console.log).to.have.been.calledWith(2)
+            })
+        })
+
         // TO-maybe-DO
 
-        // Javascript events object, key:value -> event:function, event:[f, f]
-        // rest of ...args to be only elements or arrays of elements, for appending
         // Accept functions when element count >1, for attributes/styles, accepting params -> elem, elemIndex
         // Accept arrays when element count>1, which are iterated through with [ index % arr.length]
     </script>

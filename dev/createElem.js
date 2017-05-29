@@ -31,27 +31,44 @@ window.createElem = (...args) => {
     if(args.length && Object(args[0])===args[0] && !(args[0] instanceof HTMLElement) && !Array.isArray(args[0])){
         for(const attribute in args[0]){
 
-            if(attribute=="class"){
-                newElem.className = args[0].class
-            }else if(attribute=="style") {
+            switch(attribute){
 
-                const styles = args[0].style
+                case "class":
+                    newElem.className = args[0].class
+                    break
 
-                if(styles!=null && styles!=undefined && styles.constructor === Object){
+                case "style":
+                    const styles = args[0].style
 
-                    newElem.style.cssText = Object.keys(styles)
-                        .map(k => {
-                             const key = k.replace(/[A-Z]/g, k2 => `-${k2.toLowerCase()}`)
-                             const value = typeof styles[k]=="number" ? `${styles[k]}px` : styles[k]
-                             return `${key}:${value}`
-                        })
-                        .join(";")
-                }else if(typeof styles == "string"){
-                    newElem.style.cssText = styles
-                }else throw new Error("Style value must be either object or string.")
-                
-            }else {
-                newElem[attribute] = args[0][attribute]
+                    if(styles!=null && styles!=undefined && styles.constructor === Object){
+
+                        newElem.style.cssText = Object.keys(styles)
+                            .map(k => {
+                                 const key = k.replace(/[A-Z]/g, k2 => `-${k2.toLowerCase()}`)
+                                 const value = typeof styles[k]=="number" ? `${styles[k]}px` : styles[k]
+                                 return `${key}:${value}`
+                            })
+                            .join(";")
+                    }else if(typeof styles == "string"){
+                        newElem.style.cssText = styles
+                    }else throw new Error("Style value must be either object or string.")
+                    break
+
+                case "events":
+                    Object.keys(args[0].events).forEach(event => {
+
+                        const fn = args[0].events[event]
+
+                        if(Array.isArray(fn)){
+                            fn.forEach(f => newElem.addEventListener(event, f))
+                        }else if(typeof fn=="function"){
+                            newElem.addEventListener(event, fn)
+                        }
+                    })
+                    break
+
+                default:
+                    newElem[attribute] = args[0][attribute]
             }
         }
         args.shift()

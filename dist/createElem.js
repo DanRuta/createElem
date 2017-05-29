@@ -38,30 +38,50 @@ window.createElem = function () {
 
     if (args.length && Object(args[0]) === args[0] && !(args[0] instanceof HTMLElement) && !Array.isArray(args[0])) {
         for (var attribute in args[0]) {
+            (function () {
 
-            if (attribute == "class") {
-                newElem.className = args[0].class;
-            } else if (attribute == "style") {
-                (function () {
+                switch (attribute) {
 
-                    var styles = args[0].style;
+                    case "class":
+                        newElem.className = args[0].class;
+                        break;
 
-                    if (styles != null && styles != undefined && styles.constructor === Object) {
+                    case "style":
+                        var styles = args[0].style;
 
-                        newElem.style.cssText = Object.keys(styles).map(function (k) {
-                            var key = k.replace(/[A-Z]/g, function (k2) {
-                                return "-" + k2.toLowerCase();
-                            });
-                            var value = typeof styles[k] == "number" ? styles[k] + "px" : styles[k];
-                            return key + ":" + value;
-                        }).join(";");
-                    } else if (typeof styles == "string") {
-                        newElem.style.cssText = styles;
-                    } else throw new Error("Style value must be either object or string.");
-                })();
-            } else {
-                newElem[attribute] = args[0][attribute];
-            }
+                        if (styles != null && styles != undefined && styles.constructor === Object) {
+
+                            newElem.style.cssText = Object.keys(styles).map(function (k) {
+                                var key = k.replace(/[A-Z]/g, function (k2) {
+                                    return "-" + k2.toLowerCase();
+                                });
+                                var value = typeof styles[k] == "number" ? styles[k] + "px" : styles[k];
+                                return key + ":" + value;
+                            }).join(";");
+                        } else if (typeof styles == "string") {
+                            newElem.style.cssText = styles;
+                        } else throw new Error("Style value must be either object or string.");
+                        break;
+
+                    case "events":
+                        Object.keys(args[0].events).forEach(function (event) {
+
+                            var fn = args[0].events[event];
+
+                            if (Array.isArray(fn)) {
+                                fn.forEach(function (f) {
+                                    return newElem.addEventListener(event, f);
+                                });
+                            } else if (typeof fn == "function") {
+                                newElem.addEventListener(event, fn);
+                            }
+                        });
+                        break;
+
+                    default:
+                        newElem[attribute] = args[0][attribute];
+                }
+            })();
         }
         args.shift();
     }
