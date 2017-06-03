@@ -28,7 +28,7 @@ const elem3 = createElem("div", {style: {
     backgroundColor: "red",
     "border-bottom": "1px solid black"
 }})    // <div style="height:200px;width:150px;background-color:red;border-bottom:1px solid black"></div>
-const elem4 = createElem("div#container", elem1, [elem2, elem4])
+const elem4 = createElem("div#container", elem1, [elem2, elem3])
 /*
 <div id="container">
     <div id="id" class="class"></div>
