@@ -41,7 +41,9 @@ const elem4 = createElem("div", {style: {
     backgroundColor: "red",
     "border-bottom": "1px solid black"
 }})    // <div style="height:200px;width:150px;background-color:red;border-bottom:1px solid black"></div>
-const elem4 = createElem("div#container", elem1, elem2, [elem3, elem4]) // Mix and match elements/arrays, as needed
+
+// Mix and match elements/arrays, as needed
+const elem5 = createElem("div#container", elem1, elem2, [elem3, elem4]) 
 /*
 <div id="container">
     <div id="id" class="class"></div>
@@ -50,12 +52,13 @@ const elem4 = createElem("div#container", elem1, elem2, [elem3, elem4]) // Mix a
     <div style="height:200px;width:150px;background-color:red;border-bottom:1px solid black"></div>
 </div>
 */
+
 const arrayOfDivs = createElem(5, "div.class") // [div.class, div.class, div.class, div.class, div.class]
 const divGivenCSSString = createElem("div", {style: "height:10px;width:10px"}) 
 // <div style="height:10px;width:10px"></div>
 
-const elem5 = createElem("div", {events: {
+const elem6 = createElem("div", {events: {
     click: () => console.log("hi")
 }}) // <div></div>
-elem5.click() // "hi"
+elem6.click() // "hi"
 ```
