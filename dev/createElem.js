@@ -28,51 +28,60 @@ window.createElem = (...args) => {
         newElem.className = classes.map(c => c.substr(1,c.length)).join(" ")
     }
 
-    if(args.length && Object(args[0])===args[0] && !(args[0] instanceof HTMLElement) && !Array.isArray(args[0])){
-        for(const attribute in args[0]){
+    if(args.length) {
 
-            switch(attribute){
+        if(typeof args[0] == "string") {
+            newElem.innerHTML = args[0]
+            args.shift()
 
-                case "class":
-                    newElem.className = args[0].class
-                    break
+        }else if(Object(args[0])===args[0] && !(args[0] instanceof HTMLElement) && !Array.isArray(args[0])){
+            
+            for(const attribute in args[0]){
 
-                case "style":
-                    const styles = args[0].style
+                switch(attribute){
 
-                    if(styles!=null && styles!=undefined && styles.constructor === Object){
+                    case "class":
+                        newElem.className = args[0].class
+                        break
 
-                        newElem.style.cssText = Object.keys(styles)
-                            .map(k => {
-                                 const key = k.replace(/[A-Z]/g, k2 => `-${k2.toLowerCase()}`)
-                                 const value = typeof styles[k]=="number" ? `${styles[k]}px` : styles[k]
-                                 return `${key}:${value}`
-                            })
-                            .join(";")
-                    }else if(typeof styles == "string"){
-                        newElem.style.cssText = styles
-                    }else throw new Error("Style value must be either object or string.")
-                    break
+                    case "style":
+                        const styles = args[0].style
 
-                case "events":
-                    Object.keys(args[0].events).forEach(event => {
+                        if(styles!=null && styles!=undefined && styles.constructor === Object){
 
-                        const fn = args[0].events[event]
+                            newElem.style.cssText = Object.keys(styles)
+                                .map(k => {
+                                     const key = k.replace(/[A-Z]/g, k2 => `-${k2.toLowerCase()}`)
+                                     const value = typeof styles[k]=="number" ? `${styles[k]}px` : styles[k]
+                                     return `${key}:${value}`
+                                })
+                                .join(";")
+                        }else if(typeof styles == "string"){
+                            newElem.style.cssText = styles
+                        }else throw new Error("Style value must be either object or string.")
+                        break
 
-                        if(Array.isArray(fn)){
-                            fn.forEach(f => newElem.addEventListener(event, f))
-                        }else if(typeof fn=="function"){
-                            newElem.addEventListener(event, fn)
-                        }
-                    })
-                    break
+                    case "events":
+                        Object.keys(args[0].events).forEach(event => {
 
-                default:
-                    newElem[attribute] = args[0][attribute]
+                            const fn = args[0].events[event]
+
+                            if(Array.isArray(fn)){
+                                fn.forEach(f => newElem.addEventListener(event, f))
+                            }else if(typeof fn=="function"){
+                                newElem.addEventListener(event, fn)
+                            }
+                        })
+                        break
+
+                    default:
+                        newElem[attribute] = args[0][attribute]
+                }
             }
+            args.shift()
         }
-        args.shift()
     }
+
 
     const processItem = item => {
 

@@ -44,6 +44,12 @@
                 expect(console.warn).to.be.called
             })
 
+            it("Uses the second parameter as innerHTML if the type is string", () => {
+                const div = createElem("div", "some text")
+                expect(div.tagName).to.equal("DIV")
+                expect(div.innerHTML).to.equal("some text")
+            })
+
             it("Returns a list of 5 divs when passing 5 as first parameter: createElem(5, 'div')", () => {
                 const elems = createElem(5, 'div')
                 expect(elems.length).to.equal(5)

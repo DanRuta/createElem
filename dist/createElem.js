@@ -36,54 +36,61 @@ window.createElem = function () {
         }).join(" ");
     }
 
-    if (args.length && Object(args[0]) === args[0] && !(args[0] instanceof HTMLElement) && !Array.isArray(args[0])) {
-        for (var attribute in args[0]) {
-            (function () {
+    if (args.length) {
 
-                switch (attribute) {
+        if (typeof args[0] == "string") {
+            newElem.innerHTML = args[0];
+            args.shift();
+        } else if (Object(args[0]) === args[0] && !(args[0] instanceof HTMLElement) && !Array.isArray(args[0])) {
 
-                    case "class":
-                        newElem.className = args[0].class;
-                        break;
+            for (var attribute in args[0]) {
+                (function () {
 
-                    case "style":
-                        var styles = args[0].style;
+                    switch (attribute) {
 
-                        if (styles != null && styles != undefined && styles.constructor === Object) {
+                        case "class":
+                            newElem.className = args[0].class;
+                            break;
 
-                            newElem.style.cssText = Object.keys(styles).map(function (k) {
-                                var key = k.replace(/[A-Z]/g, function (k2) {
-                                    return "-" + k2.toLowerCase();
-                                });
-                                var value = typeof styles[k] == "number" ? styles[k] + "px" : styles[k];
-                                return key + ":" + value;
-                            }).join(";");
-                        } else if (typeof styles == "string") {
-                            newElem.style.cssText = styles;
-                        } else throw new Error("Style value must be either object or string.");
-                        break;
+                        case "style":
+                            var styles = args[0].style;
 
-                    case "events":
-                        Object.keys(args[0].events).forEach(function (event) {
+                            if (styles != null && styles != undefined && styles.constructor === Object) {
 
-                            var fn = args[0].events[event];
+                                newElem.style.cssText = Object.keys(styles).map(function (k) {
+                                    var key = k.replace(/[A-Z]/g, function (k2) {
+                                        return "-" + k2.toLowerCase();
+                                    });
+                                    var value = typeof styles[k] == "number" ? styles[k] + "px" : styles[k];
+                                    return key + ":" + value;
+                                }).join(";");
+                            } else if (typeof styles == "string") {
+                                newElem.style.cssText = styles;
+                            } else throw new Error("Style value must be either object or string.");
+                            break;
 
-                            if (Array.isArray(fn)) {
-                                fn.forEach(function (f) {
-                                    return newElem.addEventListener(event, f);
-                                });
-                            } else if (typeof fn == "function") {
-                                newElem.addEventListener(event, fn);
-                            }
-                        });
-                        break;
+                        case "events":
+                            Object.keys(args[0].events).forEach(function (event) {
 
-                    default:
-                        newElem[attribute] = args[0][attribute];
-                }
-            })();
+                                var fn = args[0].events[event];
+
+                                if (Array.isArray(fn)) {
+                                    fn.forEach(function (f) {
+                                        return newElem.addEventListener(event, f);
+                                    });
+                                } else if (typeof fn == "function") {
+                                    newElem.addEventListener(event, fn);
+                                }
+                            });
+                            break;
+
+                        default:
+                            newElem[attribute] = args[0][attribute];
+                    }
+                })();
+            }
+            args.shift();
         }
-        args.shift();
     }
 
     var processItem = function processItem(item) {
