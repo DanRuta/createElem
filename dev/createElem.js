@@ -74,6 +74,14 @@ window.createElem = (...args) => {
                         })
                         break
 
+                    case "dataset":
+                        Object.keys(args[0].dataset).forEach(dskey => {
+                            
+                            const dsvalue = args[0].dataset[dskey]
+
+                            newElem.dataset[dskey] = dsvalue
+                        })
+
                     default:
                         newElem[attribute] = args[0][attribute]
                 }
