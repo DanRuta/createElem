@@ -1,5 +1,5 @@
 # createElem
-createElem is a tiny but powerful helper function, which can be used to quickly generate one or more HTML elements and HTML structures, in JavaScript, along with their attributes CSS, and js events. Fully unit tested with Mocha.
+createElem is a tiny but powerful helper function, which can be used to quickly generate one or more HTML elements and HTML structures, in JavaScript, along with their attributes CSS, dataset, and js events. Fully unit tested with Mocha.
 
 ##  createElem(numOfElements, tag, options, children)
 All parameters are optional, but they must appear in that order, and tag must be included if using options or children.
@@ -62,3 +62,7 @@ const elem6 = createElem("div", {events: {
 }}) // <div></div>
 elem6.click() // "hi"
 ```
+
+## Development
+
+When contributing, `npm install` the dev dependencies, and run `grunt` to run the task runner, and build the `dist` file. You can also add unit tests under the test directory, in `test.html`, which you can open to check results.
