@@ -163,6 +163,10 @@
                 expect(elem.required).to.be.true
                 expect(elem.type).to.equal("number")
             })
+
+            it("Creates a div with the 'test' dataset attribute for createElem('div', {dataset: {test: 'testDataValue'}})", () => {
+                expect(createElem('div', {dataset: {test: 'testDataValue'}}).dataset.test).to.equal("testDataValue")
+            })
         })
 
         describe("Styling", () => {
