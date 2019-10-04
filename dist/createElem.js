@@ -84,6 +84,15 @@ window.createElem = function () {
                             });
                             break;
 
+                        case "dataset":
+                            Object.keys(args[0].dataset).forEach(function (dskey) {
+
+                                var dsvalue = args[0].dataset[dskey];
+
+                                newElem.dataset[dskey] = dsvalue;
+                            });
+                            break;
+
                         default:
                             newElem[attribute] = args[0][attribute];
                     }
