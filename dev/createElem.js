@@ -81,6 +81,7 @@ window.createElem = (...args) => {
 
                             newElem.dataset[dskey] = dsvalue
                         })
+                        break
 
                     default:
                         newElem[attribute] = args[0][attribute]
